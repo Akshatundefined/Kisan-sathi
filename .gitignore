@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains your database password)
+.env
+
+# Prisma
+prisma/migrations/dev.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/

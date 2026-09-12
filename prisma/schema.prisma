@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Farmer {
+  id        Int       @id @default(autoincrement())
+  phone     String    @unique
+  name      String?
+  village   String?
+  createdAt DateTime  @default(now())
+  bookings  Booking[]
+}
+
+model Centre {
+  id       Int       @id @default(autoincrement())
+  name     String
+  location String?
+  capacity Int       @default(50)
+  bookings Booking[]
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  farmer     Farmer   @relation(fields: [farmerId], references: [id])
+  farmerId   Int
+  centre     Centre   @relation(fields: [centreId], references: [id])
+  centreId   Int
+  crop       String
+  quantity   Float
+  date       DateTime
+  slot       String
+  status     String   @default("pending")
+  payment    Payment?
+  createdAt  DateTime @default(now())
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  bookingId Int      @unique
+  amount    Float?
+  status    String   @default("pending")
+  paidAt    DateTime?
+}
+
+model OtpRequest {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  otp       String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+}

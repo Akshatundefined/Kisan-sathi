@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kisan Sathi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF8F2; --primary:#1F4E3D; --primary-dark:#153529;
+    --accent:#D9A441; --accent-soft:#F3E3C2; --soil:#5C4033;
+    --success:#3C8558; --amber:#C97F1D; --ink:#1E1E1E;
+    --line:#E4DCC8; --card:#FFFFFF; --danger:#B33A3A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans','Noto Sans Devanagari',sans-serif;
+    background:linear-gradient(180deg,#EDE7D6 0%, #DDD3B8 100%);
+    color:var(--ink); min-height:100vh; display:flex;
+    align-items:flex-start; justify-content:center; padding:24px 12px;
+  }
+  #app-shell{
+    width:100%; max-width:420px; background:var(--bg); border-radius:28px;
+    overflow:hidden; box-shadow:0 20px 50px rgba(30,20,10,0.25);
+    min-height:720px; display:flex; flex-direction:column; position:relative;
+  }
+  .topbar{
+    background:var(--primary); color:#fff; padding:16px 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .brand-mark{
+    width:36px;height:36px;border-radius:10px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+  }
+  .brand-text .name{font-weight:800;font-size:17px;line-height:1.1;}
+  .brand-text .tagline{font-size:11px;opacity:0.85;}
+
+  .screen{flex:1;padding:22px 18px 90px 18px;overflow-y:auto;display:none;}
+  .screen.active{display:block;}
+
+  .login-wrap{padding-top:26px;text-align:center;}
+  .login-illustration{font-size:50px;margin-bottom:6px;}
+  h1.hero{font-size:19px;margin:0 0 4px 0;color:var(--primary-dark);font-weight:800;}
+  p.sub{color:var(--soil);font-size:13.5px;margin:0 0 24px 0;line-height:1.5;}
+  .field-label{display:block;text-align:left;font-size:13px;font-weight:600;color:var(--soil);margin:14px 0 6px 2px;}
+  .field-input{
+    width:100%;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);
+    font-size:16px;font-family:inherit;background:#fff;color:var(--ink);
+  }
+  .field-input:focus{outline:none;border-color:var(--primary);}
+  select.field-input{appearance:none;background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="%235C4033"><path d="M2 4l5 5 5-5"/></svg>') no-repeat right 14px center;}
+  .phone-row{display:flex;gap:8px;}
+  .phone-prefix{
+    display:flex;align-items:center;justify-content:center;padding:0 12px;
+    border-radius:12px;border:1.5px solid var(--line);background:#fff;
+    font-weight:600;color:var(--soil);font-size:14px;
+  }
+  .btn-primary{
+    width:100%;padding:14px;border-radius:12px;border:none;background:var(--primary);
+    color:#fff;font-size:15px;font-weight:700;margin-top:20px;cursor:pointer;font-family:inherit;
+  }
+  .btn-primary:active{background:var(--primary-dark);}
+  .btn-danger{background:var(--danger);}
+  .btn-small{padding:10px;font-size:13px;margin-top:10px;}
+  .demo-note{
+    background:var(--accent-soft);border:1px dashed var(--accent);border-radius:10px;
+    padding:10px 12px;font-size:12px;color:#7a5a15;margin-top:16px;text-align:left;line-height:1.4;
+  }
+
+  .greet-card{
+    background:var(--primary);color:#fff;border-radius:18px;padding:18px;margin-bottom:18px;
+    background-image:radial-gradient(circle at 90% -10%, rgba(217,164,65,0.35), transparent 55%);
+  }
+  .greet-card .hi{font-size:13px;opacity:0.85;}
+  .greet-card .farmer-name{font-size:19px;font-weight:800;margin-top:2px;}
+
+  .section-title{font-size:14px;font-weight:800;color:var(--primary-dark);margin:4px 0 12px 2px;}
+  .form-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;}
+
+  .token-card{
+    position:relative;background:#fff;border-radius:14px;margin-bottom:14px;
+    box-shadow:0 4px 14px rgba(92,64,51,0.12);overflow:hidden;
+  }
+  .token-top{background:var(--primary);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+  .token-top .tid{font-size:11px;opacity:0.8;}
+  .token-body{padding:14px 16px;}
+  .token-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--ink);}
+  .token-row span:first-child{color:var(--soil);}
+  .token-notch{position:absolute;left:-8px;top:44px;width:16px;height:16px;background:var(--bg);border-radius:50%;}
+  .token-notch.right{left:auto;right:-8px;}
+  .status-chip{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;}
+  .status-pending{background:#FCEBD0;color:var(--amber);}
+  .status-progress{background:#DCEEFB;color:#1E6FA8;}
+  .status-done{background:#DEF0E4;color:var(--success);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--soil);}
+  .empty-state .ic{font-size:40px;margin-bottom:8px;}
+  .admin-note{font-size:11.5px;color:var(--soil);background:var(--accent-soft);border-radius:10px;padding:8px 12px;margin-bottom:14px;line-height:1.4;}
+
+  .bottomnav{
+    position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);
+    display:flex;padding:8px 4px 10px 4px;
+  }
+  .navbtn{
+    flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+    color:#9a9182;font-size:10.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px;
+  }
+  .navbtn.active{color:var(--primary);}
+  .navbtn .ic{font-size:19px;}
+
+  .chat-fab{
+    position:absolute;right:16px;bottom:78px;width:54px;height:54px;border-radius:50%;
+    background:var(--accent);border:none;font-size:24px;box-shadow:0 6px 16px rgba(217,164,65,0.5);
+    cursor:pointer;z-index:5;
+  }
+  .chat-panel{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10;}
+  .chat-panel.open{display:flex;}
+  .chat-header{background:var(--primary);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:10px;}
+  .chat-header .back{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;}
+  .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .msg{max-width:80%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;}
+  .msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px;}
+  .msg.user{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff;}
+  .chat-input-row input{flex:1;padding:11px 14px;border-radius:20px;border:1.5px solid var(--line);font-family:inherit;font-size:14px;}
+  .chat-input-row button{background:var(--primary);color:#fff;border:none;border-radius:50%;width:42px;height:42px;font-size:16px;cursor:pointer;}
+
+  .toast{
+    position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
+    padding:10px 18px;border-radius:24px;font-size:12.5px;z-index:20;opacity:0;transition:opacity .25s;
+    pointer-events:none;white-space:nowrap;max-width:90%;text-align:center;
+  }
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="app-shell">
+
+  <div class="topbar">
+    <div class="brand-mark">🌾</div>
+    <div class="brand-text">
+      <div class="name">Kisan Sathi</div>
+      <div class="tagline">किसान साथी</div>
+    </div>
+  </div>
+
+  <div class="screen active" id="screen-login">
+    <div class="login-wrap">
+      <div class="login-illustration">🧑‍🌾</div>
+      <h1 class="hero">Welcome to Kisan Sathi</h1>
+      <p class="sub">Book your procurement slot, track your payment, and skip the long queue at the centre.</p>
+
+      <div id="phoneStep">
+        <label class="field-label">Mobile number</label>
+        <div class="phone-row">
+          <div class="phone-prefix">+91</div>
+          <input class="field-input" id="phoneInput" maxlength="10" placeholder="9876543210">
+        </div>
+        <button class="btn-primary" onclick="sendOtp()">Send OTP</button>
+      </div>
+
+      <div id="otpStep" style="display:none;">
+        <label class="field-label">Enter OTP</label>
+        <input class="field-input" id="otpInput" maxlength="4" placeholder="1234" style="text-align:center;letter-spacing:6px;font-size:20px;">
+        <button class="btn-primary" onclick="verifyOtp()">Verify &amp; Continue</button>
+        <div class="demo-note" id="demoNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-book">
+    <div class="greet-card">
+      <div class="hi">Namaste,</div>
+      <div class="farmer-name" id="farmerNameDisplay">Farmer</div>
+    </div>
+    <div class="section-title">Book a procurement slot</div>
+    <div class="form-card">
+      <label class="field-label">Crop</label>
+      <select class="field-input" id="cropSelect">
+        <option value="wheat">Wheat</option>
+        <option value="paddy">Paddy (Rice)</option>
+        <option value="maize">Maize</option>
+        <option value="soybean">Soybean</option>
+      </select>
+      <label class="field-label">Procurement centre</label>
+      <select class="field-input" id="centreSelect">
+        <option value="1">Bilaspur Mandi Centre 1</option>
+        <option value="2">Bilaspur Mandi Centre 2</option>
+        <option value="3">Takhatpur Procurement Centre</option>
+      </select>
+      <label class="field-label">Expected quantity (quintals)</label>
+      <input class="field-input" id="qtyInput" type="number" min="1" placeholder="e.g. 25">
+      <label class="field-label">Preferred date</label>
+      <input class="field-input" id="dateInput" type="date">
+      <label class="field-label">Time slot</label>
+      <select class="field-input" id="slotSelect">
+        <option>7:00 AM – 9:00 AM</option>
+        <option>9:00 AM – 11:00 AM</option>
+        <option>11:00 AM – 1:00 PM</option>
+        <option>2:00 PM – 4:00 PM</option>
+      </select>
+      <button class="btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-bookings">
+    <div class="section-title">My bookings</div>
+    <div id="bookingsList"></div>
+  </div>
+
+  <div class="screen" id="screen-admin">
+    <div class="section-title">Centre queue (all farmers)</div>
+    <div class="admin-note">This view simulates a procurement-centre officer checking bookings from a different device.</div>
+    <div id="adminList"></div>
+  </div>
+
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <button class="back" onclick="closeChat()">←</button>
+      <div>
+        <div style="font-weight:800;font-size:14px;">Kisan Sathi Assistant</div>
+        <div style="font-size:11px;opacity:0.85;">Ask about booking, queue or payment</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <input id="chatInput" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()">➤</button>
+    </div>
+  </div>
+
+  <div class="chat-fab" onclick="openChat()">💬</div>
+
+  <div class="bottomnav" id="bottomNav" style="display:none;">
+    <button class="navbtn active" data-nav="book" onclick="goScreen('book')"><span class="ic">📅</span><span>Book</span></button>
+    <button class="navbtn" data-nav="bookings" onclick="goScreen('bookings')"><span class="ic">🧾</span><span>Bookings</span></button>
+    <button class="navbtn" data-nav="admin" onclick="goScreen('admin')"><span class="ic">🏭</span><span>Centre</span></button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+let currentFarmer = null;
+
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+
+function sendOtp(){
+  const phone = document.getElementById('phoneInput').value.trim();
+  if(!/^[6-9]\d{9}$/.test(phone)){ showToast('Please enter a valid 10-digit mobile number.'); return; }
+  fetch('/api/auth/send-otp', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ phone: phone })
+  }).then(function(r){ return r.json(); }).then(function(data){
+    if(data.error){ showToast(data.error); return; }
+    document.getElementById('phoneStep').style.display = 'none';
+    document.getElementById('otpStep').style.display = 'block';
+    document.getElementById('demoNote').textContent = 'Demo mode (no real SMS gateway yet) — your OTP is ' + data.devOtp;
+  }).catch(function(){ showToast('Could not reach the server.'); });
+}
+
+function verifyOtp(){
+  const phone = document.getElementById('phoneInput').value.trim();
+  const otp = document.getElementById('otpInput').value.trim();
+  fetch('/api/auth/verify-otp', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ phone: phone, otp: otp })
+  }).then(function(r){ return r.json(); }).then(function(data){
+    if(data.error){ showToast(data.error); return; }
+    currentFarmer = data.farmer;
+    document.getElementById('farmerNameDisplay').textContent = currentFarmer.name || currentFarmer.phone;
+    document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('bottomNav').style.display = 'flex';
+    goScreen('book');
+    addChatMessage("Namaste! I'm the Kisan Sathi assistant. Ask me how to book a slot, check your queue position, or track payment.", 'bot');
+  }).catch(function(){ showToast('Could not reach the server.'); });
+}
+
+function goScreen(name){
+  const screens = ['login','book','bookings','admin'];
+  for(let i=0;i<screens.length;i++){
+    const el = document.getElementById('screen-'+screens[i]);
+    if(el) el.classList.remove('active');
+  }
+  document.getElementById('screen-'+name).classList.add('active');
+  const navBtns = document.querySelectorAll('.navbtn');
+  navBtns.forEach(function(b){ b.classList.toggle('active', b.dataset.nav === name); });
+  if(name === 'bookings') loadBookings();
+  if(name === 'admin') loadAdmin();
+}
+
+function statusChip(status){
+  if(status === 'done') return '<span class="status-chip status-done">Procured</span>';
+  if(status === 'progress') return '<span class="status-chip status-progress">In Queue</span>';
+  return '<span class="status-chip status-pending">Pending</span>';
+}
+
+function confirmBooking(){
+  const qty = document.getElementById('qtyInput').value;
+  const date = document.getElementById('dateInput').value;
+  if(!qty || !date){ showToast('Please fill in quantity and date.'); return; }
+  const body = {
+    farmerId: currentFarmer.id,
+    centreId: Number(document.getElementById('centreSelect').value),
+    crop: document.getElementById('cropSelect').value,
+    quantity: Number(qty),
+    date: date,
+    slot: document.getElementById('slotSelect').value
+  };
+  fetch('/api/bookings', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); }).then(function(data){
+    if(data.error){ showToast('Booking failed: ' + data.error); return; }
+    showToast('Booking confirmed!');
+    document.getElementById('qtyInput').value = '';
+    document.getElementById('dateInput').value = '';
+    goScreen('bookings');
+  }).catch(function(){ showToast('Could not reach the server.'); });
+}
+
+function loadBookings(){
+  fetch('/api/farmers/' + currentFarmer.id + '/bookings')
+    .then(function(r){ return r.json(); })
+    .then(function(list){
+      const wrap = document.getElementById('bookingsList');
+      if(!list.length){
+        wrap.innerHTML = '<div class="empty-state"><div class="ic">🧾</div>No bookings yet. Book your first slot!</div>';
+        return;
+      }
+      let html = '';
+      for(let i=0;i<list.length;i++){
+        const b = list[i];
+        html += '<div class="token-card">' +
+          '<div class="token-notch"></div><div class="token-notch right"></div>' +
+          '<div class="token-top"><span class="tid">Token #' + String(b.id).padStart(6,'0') + '</span>' + statusChip(b.status) + '</div>' +
+          '<div class="token-body">' +
+            '<div class="token-row"><span>Crop</span><span>' + b.crop + '</span></div>' +
+            '<div class="token-row"><span>Centre</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
+            '<div class="token-row"><span>Quantity</span><span>' + b.quantity + ' qtl</span></div>' +
+            '<div class="token-row"><span>Date</span><span>' + b.date.slice(0,10) + '</span></div>' +
+            '<div class="token-row"><span>Slot</span><span>' + b.slot + '</span></div>' +
+            '<div class="token-row"><span>Payment</span><span>' + ((b.payment && b.payment.status === 'paid') ? 'Paid' : 'Pending') + '</span></div>' +
+            '<button class="btn-primary btn-danger btn-small" onclick="cancelBooking(' + b.id + ')">Cancel Booking</button>' +
+          '</div>' +
+        '</div>';
+      }
+      wrap.innerHTML = html;
+    }).catch(function(){ showToast('Could not load bookings.'); });
+}
+
+function cancelBooking(id){
+  if(!confirm('Cancel this booking?')) return;
+  fetch('/api/bookings/' + id, { method:'DELETE' })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.error){ showToast('Could not cancel: ' + data.error); return; }
+      showToast('Booking cancelled.');
+      loadBookings();
+    }).catch(function(){ showToast('Could not reach the server.'); });
+}
+
+function nextStatus(current){
+  if(current === 'pending') return 'progress';
+  if(current === 'progress') return 'done';
+  return 'done';
+}
+function nextStatusLabel(current){
+  if(current === 'pending') return 'Mark In Queue';
+  if(current === 'progress') return 'Mark Procured';
+  return null;
+}
+
+function loadAdmin(){
+  fetch('/api/admin/bookings')
+    .then(function(r){ return r.json(); })
+    .then(function(list){
+      const wrap = document.getElementById('adminList');
+      if(!list.length){
+        wrap.innerHTML = '<div class="empty-state"><div class="ic">🏭</div>No bookings in the system yet.</div>';
+        return;
+      }
+      let html = '';
+      for(let i=0;i<list.length;i++){
+        const b = list[i];
+        const label = nextStatusLabel(b.status);
+        html += '<div class="token-card">' +
+          '<div class="token-notch"></div><div class="token-notch right"></div>' +
+          '<div class="token-top"><span class="tid">' + (b.farmer ? b.farmer.phone : '') + '</span>' + statusChip(b.status) + '</div>' +
+          '<div class="token-body">' +
+            '<div class="token-row"><span>Crop</span><span>' + b.crop + '</span></div>' +
+            '<div class="token-row"><span>Centre</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
+            '<div class="token-row"><span>Date / Slot</span><span>' + b.date.slice(0,10) + ' · ' + b.slot + '</span></div>' +
+            (label ? '<button class="btn-primary btn-small" onclick="advanceStatus(' + b.id + ", '" + nextStatus(b.status) + "')\">" + label + '</button>' : '') +
+          '</div>' +
+        '</div>';
+      }
+      wrap.innerHTML = html;
+    }).catch(function(){ showToast('Could not load centre data.'); });
+}
+
+function advanceStatus(id, newStatus){
+  fetch('/api/bookings/' + id + '/status', {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ status: newStatus })
+  }).then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.error){ showToast('Could not update: ' + data.error); return; }
+      showToast('Status updated.');
+      loadAdmin();
+    }).catch(function(){ showToast('Could not reach the server.'); });
+}
+
+function openChat(){ document.getElementById('chatPanel').classList.add('open'); }
+function closeChat(){ document.getElementById('chatPanel').classList.remove('open'); }
+function addChatMessage(text, who){
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+const FAQ = [
+  { k:['book','slot'], a:'To book a slot: go to the Book tab, choose your crop, centre, quantity, date and time, then tap Confirm Booking.' },
+  { k:['queue','status','wait'], a:'Check the My Bookings tab — it shows your current status: Pending, In Queue, or Procured.' },
+  { k:['payment','pay','money'], a:'Payment status shows in My Bookings under each booking — Pending or Paid.' },
+  { k:['otp','login'], a:'Enter your 10-digit mobile number, tap Send OTP, then enter the code shown to log in.' }
+];
+function sendChat(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  addChatMessage(text, 'user');
+  input.value = '';
+  let reply = "I can help with booking, queue status, payment, or login. Try asking about one of those!";
+  for(let i=0;i<FAQ.length;i++){
+    const item = FAQ[i];
+    const matched = item.k.some(function(k){ return text.toLowerCase().indexOf(k) !== -1; });
+    if(matched){ reply = item.a; break; }
+  }
+  setTimeout(function(){ addChatMessage(reply, 'bot'); }, 300);
+}
+</script>
+</body>
+</html>
