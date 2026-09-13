@@ -28,14 +28,21 @@
   }
   .topbar{
     background:var(--primary); color:#fff; padding:16px 18px;
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
   }
+  .brand{display:flex;align-items:center;gap:10px;}
   .brand-mark{
     width:36px;height:36px;border-radius:10px;background:var(--accent);
     display:flex;align-items:center;justify-content:center;font-size:18px;
   }
   .brand-text .name{font-weight:800;font-size:17px;line-height:1.1;}
   .brand-text .tagline{font-size:11px;opacity:0.85;}
+  .lang-toggle{display:flex;background:rgba(255,255,255,0.15);border-radius:20px;padding:3px;}
+  .lang-toggle button{
+    border:none;background:transparent;color:#fff;padding:6px 12px;border-radius:16px;
+    font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
+  }
+  .lang-toggle button.active{background:var(--accent);color:#1E1E1E;}
 
   .screen{flex:1;padding:22px 18px 90px 18px;overflow-y:auto;display:none;}
   .screen.active{display:block;}
@@ -138,32 +145,38 @@
 <div id="app-shell">
 
   <div class="topbar">
-    <div class="brand-mark">🌾</div>
-    <div class="brand-text">
-      <div class="name">Kisan Sathi</div>
-      <div class="tagline">किसान साथी</div>
+    <div class="brand">
+      <div class="brand-mark">🌾</div>
+      <div class="brand-text">
+        <div class="name">Kisan Sathi</div>
+        <div class="tagline" id="brandTag">किसान साथी</div>
+      </div>
+    </div>
+    <div class="lang-toggle">
+      <button id="langHi" onclick="setLang('hi')">हिं</button>
+      <button id="langEn" class="active" onclick="setLang('en')">EN</button>
     </div>
   </div>
 
   <div class="screen active" id="screen-login">
     <div class="login-wrap">
       <div class="login-illustration">🧑‍🌾</div>
-      <h1 class="hero">Welcome to Kisan Sathi</h1>
-      <p class="sub">Book your procurement slot, track your payment, and skip the long queue at the centre.</p>
+      <h1 class="hero" data-i="loginTitle">Welcome to Kisan Sathi</h1>
+      <p class="sub" data-i="loginSub">Book your procurement slot, track your payment, and skip the long queue at the centre.</p>
 
       <div id="phoneStep">
-        <label class="field-label">Mobile number</label>
+        <label class="field-label" data-i="phoneLabel">Mobile number</label>
         <div class="phone-row">
           <div class="phone-prefix">+91</div>
           <input class="field-input" id="phoneInput" maxlength="10" placeholder="9876543210">
         </div>
-        <button class="btn-primary" onclick="sendOtp()">Send OTP</button>
+        <button class="btn-primary" onclick="sendOtp()" data-i="sendOtp">Send OTP</button>
       </div>
 
       <div id="otpStep" style="display:none;">
-        <label class="field-label">Enter OTP</label>
+        <label class="field-label" data-i="otpLabel">Enter OTP</label>
         <input class="field-input" id="otpInput" maxlength="4" placeholder="1234" style="text-align:center;letter-spacing:6px;font-size:20px;">
-        <button class="btn-primary" onclick="verifyOtp()">Verify &amp; Continue</button>
+        <button class="btn-primary" onclick="verifyOtp()" data-i="verifyOtp">Verify &amp; Continue</button>
         <div class="demo-note" id="demoNote"></div>
       </div>
     </div>
@@ -171,47 +184,47 @@
 
   <div class="screen" id="screen-book">
     <div class="greet-card">
-      <div class="hi">Namaste,</div>
+      <div class="hi" data-i="greetHi">Namaste,</div>
       <div class="farmer-name" id="farmerNameDisplay">Farmer</div>
     </div>
-    <div class="section-title">Book a procurement slot</div>
+    <div class="section-title" data-i="bookTitle">Book a procurement slot</div>
     <div class="form-card">
-      <label class="field-label">Crop</label>
+      <label class="field-label" data-i="cropLabel">Crop</label>
       <select class="field-input" id="cropSelect">
-        <option value="wheat">Wheat</option>
-        <option value="paddy">Paddy (Rice)</option>
-        <option value="maize">Maize</option>
-        <option value="soybean">Soybean</option>
+        <option value="wheat" data-i="cropWheat">Wheat</option>
+        <option value="paddy" data-i="cropPaddy">Paddy (Rice)</option>
+        <option value="maize" data-i="cropMaize">Maize</option>
+        <option value="soybean" data-i="cropSoy">Soybean</option>
       </select>
-      <label class="field-label">Procurement centre</label>
+      <label class="field-label" data-i="centreLabel">Procurement centre</label>
       <select class="field-input" id="centreSelect">
         <option value="1">Bilaspur Mandi Centre 1</option>
         <option value="2">Bilaspur Mandi Centre 2</option>
         <option value="3">Takhatpur Procurement Centre</option>
       </select>
-      <label class="field-label">Expected quantity (quintals)</label>
+      <label class="field-label" data-i="qtyLabel">Expected quantity (quintals)</label>
       <input class="field-input" id="qtyInput" type="number" min="1" placeholder="e.g. 25">
-      <label class="field-label">Preferred date</label>
+      <label class="field-label" data-i="dateLabel">Preferred date</label>
       <input class="field-input" id="dateInput" type="date">
-      <label class="field-label">Time slot</label>
+      <label class="field-label" data-i="slotLabel">Time slot</label>
       <select class="field-input" id="slotSelect">
         <option>7:00 AM – 9:00 AM</option>
         <option>9:00 AM – 11:00 AM</option>
         <option>11:00 AM – 1:00 PM</option>
         <option>2:00 PM – 4:00 PM</option>
       </select>
-      <button class="btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+      <button class="btn-primary" onclick="confirmBooking()" data-i="confirmBooking">Confirm Booking</button>
     </div>
   </div>
 
   <div class="screen" id="screen-bookings">
-    <div class="section-title">My bookings</div>
+    <div class="section-title" data-i="myBookings">My bookings</div>
     <div id="bookingsList"></div>
   </div>
 
   <div class="screen" id="screen-admin">
-    <div class="section-title">Centre queue (all farmers)</div>
-    <div class="admin-note">This view simulates a procurement-centre officer checking bookings from a different device.</div>
+    <div class="section-title" data-i="centreTitle">Centre queue (all farmers)</div>
+    <div class="admin-note" data-i="adminNote">This view simulates a procurement-centre officer checking bookings from a different device.</div>
     <div id="adminList"></div>
   </div>
 
@@ -219,13 +232,13 @@
     <div class="chat-header">
       <button class="back" onclick="closeChat()">←</button>
       <div>
-        <div style="font-weight:800;font-size:14px;">Kisan Sathi Assistant</div>
-        <div style="font-size:11px;opacity:0.85;">Ask about booking, queue or payment</div>
+        <div style="font-weight:800;font-size:14px;" data-i="chatTitle">Kisan Sathi Assistant</div>
+        <div style="font-size:11px;opacity:0.85;" data-i="chatSub">Ask about booking, queue or payment</div>
       </div>
     </div>
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input-row">
-      <input id="chatInput" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChat()">
+      <input id="chatInput" data-i-ph="chatPlaceholder" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChat()">
       <button onclick="sendChat()">➤</button>
     </div>
   </div>
@@ -233,16 +246,88 @@
   <div class="chat-fab" onclick="openChat()">💬</div>
 
   <div class="bottomnav" id="bottomNav" style="display:none;">
-    <button class="navbtn active" data-nav="book" onclick="goScreen('book')"><span class="ic">📅</span><span>Book</span></button>
-    <button class="navbtn" data-nav="bookings" onclick="goScreen('bookings')"><span class="ic">🧾</span><span>Bookings</span></button>
-    <button class="navbtn" data-nav="admin" onclick="goScreen('admin')"><span class="ic">🏭</span><span>Centre</span></button>
+    <button class="navbtn active" data-nav="book" onclick="goScreen('book')"><span class="ic">📅</span><span data-i="navBook">Book</span></button>
+    <button class="navbtn" data-nav="bookings" onclick="goScreen('bookings')"><span class="ic">🧾</span><span data-i="navBookings">Bookings</span></button>
+    <button class="navbtn" data-nav="admin" onclick="goScreen('admin')"><span class="ic">🏭</span><span data-i="navCentre">Centre</span></button>
   </div>
 
   <div class="toast" id="toast"></div>
 </div>
 
 <script>
+const I18N = {
+  en: {
+    loginTitle:"Welcome to Kisan Sathi", loginSub:"Book your procurement slot, track your payment, and skip the long queue at the centre.",
+    phoneLabel:"Mobile number", sendOtp:"Send OTP", otpLabel:"Enter OTP", verifyOtp:"Verify & Continue",
+    greetHi:"Namaste,", bookTitle:"Book a procurement slot", cropLabel:"Crop", centreLabel:"Procurement centre",
+    qtyLabel:"Expected quantity (quintals)", dateLabel:"Preferred date", slotLabel:"Time slot", confirmBooking:"Confirm Booking",
+    myBookings:"My bookings", centreTitle:"Centre queue (all farmers)",
+    adminNote:"This view simulates a procurement-centre officer checking bookings from a different device.",
+    chatTitle:"Kisan Sathi Assistant", chatSub:"Ask about booking, queue or payment", chatPlaceholder:"Type your question...",
+    navBook:"Book", navBookings:"Bookings", navCentre:"Centre",
+    cropWheat:"Wheat", cropPaddy:"Paddy (Rice)", cropMaize:"Maize", cropSoy:"Soybean",
+    emptyBookings:"No bookings yet. Book your first slot!", emptyAdmin:"No bookings in the system yet.",
+    tokenNo:"Token", statusPending:"Pending", statusProgress:"In Queue", statusDone:"Procured",
+    paymentPaid:"Paid", paymentPending:"Pending", cancelBooking:"Cancel Booking",
+    markQueue:"Mark In Queue", markProcured:"Mark Procured",
+    invalidOtp:"Incorrect OTP, please try again.", invalidPhone:"Please enter a valid 10-digit mobile number.",
+    fillFields:"Please fill in quantity and date.", bookingSaved:"Booking confirmed!", bookingCancelled:"Booking cancelled.",
+    statusUpdated:"Status updated.", serverError:"Could not reach the server.", confirmCancel:"Cancel this booking?",
+    otpSentDemo:"Demo mode (no real SMS gateway yet) — your OTP is", chatWelcome:"Namaste! I'm the Kisan Sathi assistant. Ask me how to book a slot, check your queue position, or track payment.",
+    fLabelCrop:"Crop", fLabelCentre:"Centre", fLabelQty:"Quantity", fLabelDate:"Date", fLabelSlot:"Slot", fLabelPayment:"Payment", fLabelDateSlot:"Date / Slot",
+    faqDefault:"I can help with booking, queue status, payment, or login. Try asking about one of those!",
+    faqBook:"To book a slot: go to the Book tab, choose your crop, centre, quantity, date and time, then tap Confirm Booking.",
+    faqQueue:"Check the My Bookings tab — it shows your current status: Pending, In Queue, or Procured.",
+    faqPayment:"Payment status shows in My Bookings under each booking — Pending or Paid.",
+    faqOtp:"Enter your 10-digit mobile number, tap Send OTP, then enter the code shown to log in.",
+  },
+  hi: {
+    loginTitle:"किसान साथी में आपका स्वागत है", loginSub:"अपनी खरीद स्लॉट बुक करें, भुगतान ट्रैक करें, और केंद्र पर लंबी कतार से बचें।",
+    phoneLabel:"मोबाइल नंबर", sendOtp:"OTP भेजें", otpLabel:"OTP दर्ज करें", verifyOtp:"सत्यापित करें",
+    greetHi:"नमस्ते,", bookTitle:"खरीद स्लॉट बुक करें", cropLabel:"फसल", centreLabel:"खरीद केंद्र",
+    qtyLabel:"अनुमानित मात्रा (क्विंटल)", dateLabel:"पसंदीदा तारीख", slotLabel:"समय स्लॉट", confirmBooking:"बुकिंग पक्की करें",
+    myBookings:"मेरी बुकिंग", centreTitle:"केंद्र की कतार (सभी किसान)",
+    adminNote:"यह दृश्य दिखाता है कि केंद्र अधिकारी किसी अन्य डिवाइस से बुकिंग कैसे देखेगा।",
+    chatTitle:"किसान साथी सहायक", chatSub:"बुकिंग, कतार या भुगतान के बारे में पूछें", chatPlaceholder:"अपना सवाल लिखें...",
+    navBook:"बुक करें", navBookings:"बुकिंग", navCentre:"केंद्र",
+    cropWheat:"गेहूं", cropPaddy:"धान (चावल)", cropMaize:"मक्का", cropSoy:"सोयाबीन",
+    emptyBookings:"अभी कोई बुकिंग नहीं है। अपना पहला स्लॉट बुक करें!", emptyAdmin:"अभी तक कोई बुकिंग नहीं है।",
+    tokenNo:"टोकन", statusPending:"लंबित", statusProgress:"कतार में", statusDone:"खरीद हुई",
+    paymentPaid:"भुगतान हुआ", paymentPending:"लंबित", cancelBooking:"बुकिंग रद्द करें",
+    markQueue:"कतार में डालें", markProcured:"खरीद पूर्ण करें",
+    invalidOtp:"गलत OTP, पुनः प्रयास करें।", invalidPhone:"कृपया मान्य 10-अंकीय मोबाइल नंबर दर्ज करें।",
+    fillFields:"कृपया मात्रा और तारीख भरें।", bookingSaved:"बुकिंग पक्की हो गई!", bookingCancelled:"बुकिंग रद्द कर दी गई।",
+    statusUpdated:"स्थिति अपडेट हुई।", serverError:"सर्वर से जुड़ नहीं पाया।", confirmCancel:"क्या आप बुकिंग रद्द करना चाहते हैं?",
+    otpSentDemo:"डेमो मोड (कोई SMS गेटवे कनेक्ट नहीं है) — आपका OTP है", chatWelcome:"नमस्ते! मैं किसान साथी सहायक हूं। मुझसे स्लॉट बुकिंग, कतार स्थिति या भुगतान के बारे में पूछें।",
+    fLabelCrop:"फसल", fLabelCentre:"केंद्र", fLabelQty:"मात्रा", fLabelDate:"तारीख", fLabelSlot:"स्लॉट", fLabelPayment:"भुगतान", fLabelDateSlot:"तारीख / स्लॉट",
+    faqDefault:"मैं बुकिंग, कतार स्थिति, भुगतान या लॉगिन में मदद कर सकता हूं। इनमें से कुछ पूछें!",
+    faqBook:"स्लॉट बुक करने के लिए: Book टैब में जाएं, फसल, केंद्र, मात्रा, तारीख और समय चुनें, फिर Confirm Booking दबाएं।",
+    faqQueue:"My Bookings टैब देखें — यह आपकी स्थिति दिखाता है: लंबित, कतार में, या खरीद हुई।",
+    faqPayment:"भुगतान की स्थिति My Bookings में हर बुकिंग के नीचे दिखती है — लंबित या भुगतान हुआ।",
+    faqOtp:"अपना 10-अंकीय मोबाइल नंबर दर्ज करें, OTP भेजें दबाएं, फिर दिखाया गया कोड डालें।",
+  }
+};
+let lang = 'en';
 let currentFarmer = null;
+
+function t(key){ return (I18N[lang] && I18N[lang][key]) || key; }
+
+function applyLang(){
+  document.querySelectorAll('[data-i]').forEach(function(el){ el.textContent = t(el.getAttribute('data-i')); });
+  document.querySelectorAll('[data-i-ph]').forEach(function(el){ el.placeholder = t(el.getAttribute('data-i-ph')); });
+  document.getElementById('brandTag').textContent = lang === 'hi' ? 'Kisan Sathi' : 'किसान साथी';
+  const bookingsScreen = document.getElementById('screen-bookings');
+  const adminScreen = document.getElementById('screen-admin');
+  if(bookingsScreen && bookingsScreen.classList.contains('active') && currentFarmer) loadBookings();
+  if(adminScreen && adminScreen.classList.contains('active')) loadAdmin();
+}
+
+function setLang(l){
+  lang = l;
+  document.getElementById('langHi').classList.toggle('active', l === 'hi');
+  document.getElementById('langEn').classList.toggle('active', l === 'en');
+  applyLang();
+}
 
 function showToast(msg){
   const el = document.getElementById('toast');
@@ -252,7 +337,7 @@ function showToast(msg){
 
 function sendOtp(){
   const phone = document.getElementById('phoneInput').value.trim();
-  if(!/^[6-9]\d{9}$/.test(phone)){ showToast('Please enter a valid 10-digit mobile number.'); return; }
+  if(!/^[6-9]\d{9}$/.test(phone)){ showToast(t('invalidPhone')); return; }
   fetch('/api/auth/send-otp', {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ phone: phone })
@@ -260,8 +345,8 @@ function sendOtp(){
     if(data.error){ showToast(data.error); return; }
     document.getElementById('phoneStep').style.display = 'none';
     document.getElementById('otpStep').style.display = 'block';
-    document.getElementById('demoNote').textContent = 'Demo mode (no real SMS gateway yet) — your OTP is ' + data.devOtp;
-  }).catch(function(){ showToast('Could not reach the server.'); });
+    document.getElementById('demoNote').textContent = t('otpSentDemo') + ' ' + data.devOtp;
+  }).catch(function(){ showToast(t('serverError')); });
 }
 
 function verifyOtp(){
@@ -271,14 +356,14 @@ function verifyOtp(){
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ phone: phone, otp: otp })
   }).then(function(r){ return r.json(); }).then(function(data){
-    if(data.error){ showToast(data.error); return; }
+    if(data.error){ showToast(t('invalidOtp')); return; }
     currentFarmer = data.farmer;
     document.getElementById('farmerNameDisplay').textContent = currentFarmer.name || currentFarmer.phone;
     document.getElementById('screen-login').classList.remove('active');
     document.getElementById('bottomNav').style.display = 'flex';
     goScreen('book');
-    addChatMessage("Namaste! I'm the Kisan Sathi assistant. Ask me how to book a slot, check your queue position, or track payment.", 'bot');
-  }).catch(function(){ showToast('Could not reach the server.'); });
+    addChatMessage(t('chatWelcome'), 'bot');
+  }).catch(function(){ showToast(t('serverError')); });
 }
 
 function goScreen(name){
@@ -288,22 +373,26 @@ function goScreen(name){
     if(el) el.classList.remove('active');
   }
   document.getElementById('screen-'+name).classList.add('active');
-  const navBtns = document.querySelectorAll('.navbtn');
-  navBtns.forEach(function(b){ b.classList.toggle('active', b.dataset.nav === name); });
+  document.querySelectorAll('.navbtn').forEach(function(b){ b.classList.toggle('active', b.dataset.nav === name); });
   if(name === 'bookings') loadBookings();
   if(name === 'admin') loadAdmin();
 }
 
 function statusChip(status){
-  if(status === 'done') return '<span class="status-chip status-done">Procured</span>';
-  if(status === 'progress') return '<span class="status-chip status-progress">In Queue</span>';
-  return '<span class="status-chip status-pending">Pending</span>';
+  if(status === 'done') return '<span class="status-chip status-done">' + t('statusDone') + '</span>';
+  if(status === 'progress') return '<span class="status-chip status-progress">' + t('statusProgress') + '</span>';
+  return '<span class="status-chip status-pending">' + t('statusPending') + '</span>';
+}
+
+function cropLabel(crop){
+  const map = { wheat:'cropWheat', paddy:'cropPaddy', maize:'cropMaize', soybean:'cropSoy' };
+  return t(map[crop] || crop);
 }
 
 function confirmBooking(){
   const qty = document.getElementById('qtyInput').value;
   const date = document.getElementById('dateInput').value;
-  if(!qty || !date){ showToast('Please fill in quantity and date.'); return; }
+  if(!qty || !date){ showToast(t('fillFields')); return; }
   const body = {
     farmerId: currentFarmer.id,
     centreId: Number(document.getElementById('centreSelect').value),
@@ -317,11 +406,11 @@ function confirmBooking(){
     body: JSON.stringify(body)
   }).then(function(r){ return r.json(); }).then(function(data){
     if(data.error){ showToast('Booking failed: ' + data.error); return; }
-    showToast('Booking confirmed!');
+    showToast(t('bookingSaved'));
     document.getElementById('qtyInput').value = '';
     document.getElementById('dateInput').value = '';
     goScreen('bookings');
-  }).catch(function(){ showToast('Could not reach the server.'); });
+  }).catch(function(){ showToast(t('serverError')); });
 }
 
 function loadBookings(){
@@ -330,7 +419,7 @@ function loadBookings(){
     .then(function(list){
       const wrap = document.getElementById('bookingsList');
       if(!list.length){
-        wrap.innerHTML = '<div class="empty-state"><div class="ic">🧾</div>No bookings yet. Book your first slot!</div>';
+        wrap.innerHTML = '<div class="empty-state"><div class="ic">🧾</div>' + t('emptyBookings') + '</div>';
         return;
       }
       let html = '';
@@ -338,31 +427,31 @@ function loadBookings(){
         const b = list[i];
         html += '<div class="token-card">' +
           '<div class="token-notch"></div><div class="token-notch right"></div>' +
-          '<div class="token-top"><span class="tid">Token #' + String(b.id).padStart(6,'0') + '</span>' + statusChip(b.status) + '</div>' +
+          '<div class="token-top"><span class="tid">' + t('tokenNo') + ' #' + String(b.id).padStart(6,'0') + '</span>' + statusChip(b.status) + '</div>' +
           '<div class="token-body">' +
-            '<div class="token-row"><span>Crop</span><span>' + b.crop + '</span></div>' +
-            '<div class="token-row"><span>Centre</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
-            '<div class="token-row"><span>Quantity</span><span>' + b.quantity + ' qtl</span></div>' +
-            '<div class="token-row"><span>Date</span><span>' + b.date.slice(0,10) + '</span></div>' +
-            '<div class="token-row"><span>Slot</span><span>' + b.slot + '</span></div>' +
-            '<div class="token-row"><span>Payment</span><span>' + ((b.payment && b.payment.status === 'paid') ? 'Paid' : 'Pending') + '</span></div>' +
-            '<button class="btn-primary btn-danger btn-small" onclick="cancelBooking(' + b.id + ')">Cancel Booking</button>' +
+            '<div class="token-row"><span>' + t('fLabelCrop') + '</span><span>' + cropLabel(b.crop) + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelCentre') + '</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelQty') + '</span><span>' + b.quantity + ' qtl</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelDate') + '</span><span>' + b.date.slice(0,10) + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelSlot') + '</span><span>' + b.slot + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelPayment') + '</span><span>' + ((b.payment && b.payment.status === 'paid') ? t('paymentPaid') : t('paymentPending')) + '</span></div>' +
+            '<button class="btn-primary btn-danger btn-small" onclick="cancelBooking(' + b.id + ')">' + t('cancelBooking') + '</button>' +
           '</div>' +
         '</div>';
       }
       wrap.innerHTML = html;
-    }).catch(function(){ showToast('Could not load bookings.'); });
+    }).catch(function(){ showToast(t('serverError')); });
 }
 
 function cancelBooking(id){
-  if(!confirm('Cancel this booking?')) return;
+  if(!confirm(t('confirmCancel'))) return;
   fetch('/api/bookings/' + id, { method:'DELETE' })
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.error){ showToast('Could not cancel: ' + data.error); return; }
-      showToast('Booking cancelled.');
+      showToast(t('bookingCancelled'));
       loadBookings();
-    }).catch(function(){ showToast('Could not reach the server.'); });
+    }).catch(function(){ showToast(t('serverError')); });
 }
 
 function nextStatus(current){
@@ -371,8 +460,8 @@ function nextStatus(current){
   return 'done';
 }
 function nextStatusLabel(current){
-  if(current === 'pending') return 'Mark In Queue';
-  if(current === 'progress') return 'Mark Procured';
+  if(current === 'pending') return t('markQueue');
+  if(current === 'progress') return t('markProcured');
   return null;
 }
 
@@ -382,7 +471,7 @@ function loadAdmin(){
     .then(function(list){
       const wrap = document.getElementById('adminList');
       if(!list.length){
-        wrap.innerHTML = '<div class="empty-state"><div class="ic">🏭</div>No bookings in the system yet.</div>';
+        wrap.innerHTML = '<div class="empty-state"><div class="ic">🏭</div>' + t('emptyAdmin') + '</div>';
         return;
       }
       let html = '';
@@ -393,15 +482,15 @@ function loadAdmin(){
           '<div class="token-notch"></div><div class="token-notch right"></div>' +
           '<div class="token-top"><span class="tid">' + (b.farmer ? b.farmer.phone : '') + '</span>' + statusChip(b.status) + '</div>' +
           '<div class="token-body">' +
-            '<div class="token-row"><span>Crop</span><span>' + b.crop + '</span></div>' +
-            '<div class="token-row"><span>Centre</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
-            '<div class="token-row"><span>Date / Slot</span><span>' + b.date.slice(0,10) + ' · ' + b.slot + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelCrop') + '</span><span>' + cropLabel(b.crop) + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelCentre') + '</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelDateSlot') + '</span><span>' + b.date.slice(0,10) + ' · ' + b.slot + '</span></div>' +
             (label ? '<button class="btn-primary btn-small" onclick="advanceStatus(' + b.id + ", '" + nextStatus(b.status) + "')\">" + label + '</button>' : '') +
           '</div>' +
         '</div>';
       }
       wrap.innerHTML = html;
-    }).catch(function(){ showToast('Could not load centre data.'); });
+    }).catch(function(){ showToast(t('serverError')); });
 }
 
 function advanceStatus(id, newStatus){
@@ -411,9 +500,9 @@ function advanceStatus(id, newStatus){
   }).then(function(r){ return r.json(); })
     .then(function(data){
       if(data.error){ showToast('Could not update: ' + data.error); return; }
-      showToast('Status updated.');
+      showToast(t('statusUpdated'));
       loadAdmin();
-    }).catch(function(){ showToast('Could not reach the server.'); });
+    }).catch(function(){ showToast(t('serverError')); });
 }
 
 function openChat(){ document.getElementById('chatPanel').classList.add('open'); }
@@ -427,26 +516,22 @@ function addChatMessage(text, who){
   wrap.scrollTop = wrap.scrollHeight;
 }
 
-const FAQ = [
-  { k:['book','slot'], a:'To book a slot: go to the Book tab, choose your crop, centre, quantity, date and time, then tap Confirm Booking.' },
-  { k:['queue','status','wait'], a:'Check the My Bookings tab — it shows your current status: Pending, In Queue, or Procured.' },
-  { k:['payment','pay','money'], a:'Payment status shows in My Bookings under each booking — Pending or Paid.' },
-  { k:['otp','login'], a:'Enter your 10-digit mobile number, tap Send OTP, then enter the code shown to log in.' }
-];
 function sendChat(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if(!text) return;
   addChatMessage(text, 'user');
   input.value = '';
-  let reply = "I can help with booking, queue status, payment, or login. Try asking about one of those!";
-  for(let i=0;i<FAQ.length;i++){
-    const item = FAQ[i];
-    const matched = item.k.some(function(k){ return text.toLowerCase().indexOf(k) !== -1; });
-    if(matched){ reply = item.a; break; }
-  }
+  const lower = text.toLowerCase();
+  let reply = t('faqDefault');
+  if(lower.indexOf('book') !== -1 || lower.indexOf('slot') !== -1) reply = t('faqBook');
+  else if(lower.indexOf('queue') !== -1 || lower.indexOf('status') !== -1 || lower.indexOf('wait') !== -1) reply = t('faqQueue');
+  else if(lower.indexOf('payment') !== -1 || lower.indexOf('pay') !== -1 || lower.indexOf('money') !== -1) reply = t('faqPayment');
+  else if(lower.indexOf('otp') !== -1 || lower.indexOf('login') !== -1) reply = t('faqOtp');
   setTimeout(function(){ addChatMessage(reply, 'bot'); }, 300);
 }
+
+applyLang();
 </script>
 </body>
 </html>
