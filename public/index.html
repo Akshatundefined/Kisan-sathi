@@ -4,163 +4,251 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kisan Sathi</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#FBF8F2; --primary:#1F4E3D; --primary-dark:#153529;
-    --accent:#D9A441; --accent-soft:#F3E3C2; --soil:#5C4033;
-    --success:#3C8558; --amber:#C97F1D; --ink:#1E1E1E;
-    --line:#E4DCC8; --card:#FFFFFF; --danger:#B33A3A;
+    --bg:#F7F5EF; --primary:#1F4E3D; --primary-dark:#143528;
+    --accent:#D8A63D; --accent-soft:#F5E7C8; --soil:#6B5547;
+    --success:#3C8558; --amber:#C97F1D; --ink:#1E2420;
+    --line:#E2DDD1; --card:#FFFFFF; --danger:#B33A3A;
+    --shadow:0 8px 24px rgba(31,78,61,.08);
   }
+
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     font-family:'Noto Sans','Noto Sans Devanagari',sans-serif;
-    background:linear-gradient(180deg,#EDE7D6 0%, #DDD3B8 100%);
+    background:
+      radial-gradient(circle at 15% 10%,rgba(216,166,61,.12),transparent 28%),
+      linear-gradient(180deg,#EAE6D9 0%,#D8D1BF 100%);
     color:var(--ink); min-height:100vh; display:flex;
     align-items:flex-start; justify-content:center; padding:24px 12px;
   }
+
   #app-shell{
     width:100%; max-width:420px; background:var(--bg); border-radius:28px;
-    overflow:hidden; box-shadow:0 20px 50px rgba(30,20,10,0.25);
+    overflow:hidden; box-shadow:0 24px 60px rgba(30,25,15,.24);
     min-height:720px; display:flex; flex-direction:column; position:relative;
+    border:1px solid rgba(255,255,255,.65);
   }
+
   .topbar{
-    background:var(--primary); color:#fff; padding:16px 18px;
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:linear-gradient(135deg,var(--primary),#285F4A); color:#fff;
+    padding:13px 16px; display:flex; align-items:center;
+    justify-content:space-between; gap:8px; position:relative; z-index:2;
+    box-shadow:0 4px 16px rgba(20,53,40,.16);
   }
-  .brand{display:flex;align-items:center;gap:10px;}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0;}
   .brand-mark{
-    width:36px;height:36px;border-radius:10px;background:var(--accent);
-    display:flex;align-items:center;justify-content:center;font-size:18px;
+    width:40px;height:40px;border-radius:11px;background:#fff;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+    box-shadow:0 3px 10px rgba(0,0,0,.12);flex:0 0 40px;
   }
-  .brand-text .name{font-weight:800;font-size:17px;line-height:1.1;}
-  .brand-text .tagline{font-size:11px;opacity:0.85;}
-  .lang-toggle{display:flex;background:rgba(255,255,255,0.15);border-radius:20px;padding:3px;}
+  .brand-mark img{width:100%;height:100%;object-fit:contain;}
+  .brand-text .name{font-weight:800;font-size:17px;line-height:1.1;letter-spacing:-.2px;}
+  .brand-text .tagline{font-size:10.5px;opacity:.82;margin-top:2px;}
+  .topbar-right{display:flex;align-items:center;gap:7px;}
+  .bell-btn{
+    position:relative;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.14);
+    color:#fff;width:36px;height:36px;border-radius:50%;font-size:0;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:.2s ease;
+  }
+  .bell-btn:hover{background:rgba(255,255,255,.22);transform:translateY(-1px);}
+  .bell-btn::before{content:"";width:16px;height:16px;background:url("https://unpkg.com/lucide-static@latest/icons/bell.svg") center/contain no-repeat;filter:brightness(0) invert(1);}
+  .bell-badge{
+    position:absolute;top:-3px;right:-3px;background:var(--accent);color:#1E1E1E;
+    font-size:9px;font-weight:800;border-radius:10px;padding:1px 5px;min-width:14px;
+  }
+  .lang-toggle{display:flex;background:rgba(255,255,255,.13);border-radius:20px;padding:3px;border:1px solid rgba(255,255,255,.12);}
   .lang-toggle button{
-    border:none;background:transparent;color:#fff;padding:6px 12px;border-radius:16px;
-    font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
+    border:none;background:transparent;color:#fff;padding:6px 9px;border-radius:16px;
+    font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s;
   }
-  .lang-toggle button.active{background:var(--accent);color:#1E1E1E;}
+  .lang-toggle button.active{background:var(--accent);color:#1E1E1E;box-shadow:0 2px 7px rgba(0,0,0,.12);}
 
-  .screen{flex:1;padding:22px 18px 90px 18px;overflow-y:auto;display:none;}
+  .screen{
+    flex:1;padding:22px 18px 90px 18px;overflow-y:auto;display:none;
+    animation:screenIn .3s ease both;
+  }
   .screen.active{display:block;}
+  @keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){
+    .screen,.greet-card,.token-card,.btn-primary,.chat-fab{animation:none!important;transition:none!important}
+  }
 
-  .login-wrap{padding-top:26px;text-align:center;}
-  .login-illustration{font-size:50px;margin-bottom:6px;}
-  h1.hero{font-size:19px;margin:0 0 4px 0;color:var(--primary-dark);font-weight:800;}
-  p.sub{color:var(--soil);font-size:13.5px;margin:0 0 24px 0;line-height:1.5;}
-  .field-label{display:block;text-align:left;font-size:13px;font-weight:600;color:var(--soil);margin:14px 0 6px 2px;}
+  /* Login */
+  .login-wrap{padding-top:4px;text-align:center;}
+  .login-hero{
+    height:178px;border-radius:20px;overflow:hidden;position:relative;margin-bottom:22px;
+    background:
+      linear-gradient(180deg,rgba(20,53,40,.08),rgba(20,53,40,.78)),
+      url("https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1000&q=85") center/cover;
+    display:flex;align-items:flex-end;padding:18px;text-align:left;
+    box-shadow:var(--shadow);
+  }
+  .login-hero::after{
+    content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(31,78,61,.35),transparent);
+  }
+  .login-hero-content{position:relative;z-index:1;color:#fff;}
+  .login-hero-content img{width:58px;height:58px;object-fit:contain;background:#fff;border-radius:15px;padding:5px;margin-bottom:8px;}
+  .login-hero-content .mini{font-size:11px;opacity:.88;}
+  h1.hero{font-size:21px;margin:0 0 5px;color:var(--primary-dark);font-weight:800;letter-spacing:-.35px;}
+  p.sub{color:var(--soil);font-size:13.5px;margin:0 0 22px;line-height:1.5;}
+  .field-label{display:block;text-align:left;font-size:12.5px;font-weight:700;color:var(--soil);margin:14px 0 6px 2px;}
   .field-input{
     width:100%;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);
     font-size:16px;font-family:inherit;background:#fff;color:var(--ink);
+    transition:border-color .2s,box-shadow .2s,transform .2s;
   }
-  .field-input:focus{outline:none;border-color:var(--primary);}
+  .field-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(31,78,61,.09);}
   select.field-input{appearance:none;background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="%235C4033"><path d="M2 4l5 5 5-5"/></svg>') no-repeat right 14px center;}
   .phone-row{display:flex;gap:8px;}
-  .phone-prefix{
-    display:flex;align-items:center;justify-content:center;padding:0 12px;
-    border-radius:12px;border:1.5px solid var(--line);background:#fff;
-    font-weight:600;color:var(--soil);font-size:14px;
-  }
+  .phone-prefix{display:flex;align-items:center;justify-content:center;padding:0 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-weight:700;color:var(--soil);font-size:14px;}
   .btn-primary{
     width:100%;padding:14px;border-radius:12px;border:none;background:var(--primary);
     color:#fff;font-size:15px;font-weight:700;margin-top:20px;cursor:pointer;font-family:inherit;
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+    box-shadow:0 5px 14px rgba(31,78,61,.16);
   }
-  .btn-primary:active{background:var(--primary-dark);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(31,78,61,.22);background:#245A46;}
+  .btn-primary:active{transform:translateY(0);background:var(--primary-dark);}
+  .btn-primary:disabled{background:#B7AF9E;cursor:not-allowed;box-shadow:none;transform:none;}
   .btn-danger{background:var(--danger);}
+  .btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary);box-shadow:none;}
   .btn-small{padding:10px;font-size:13px;margin-top:10px;}
-  .demo-note{
-    background:var(--accent-soft);border:1px dashed var(--accent);border-radius:10px;
-    padding:10px 12px;font-size:12px;color:#7a5a15;margin-top:16px;text-align:left;line-height:1.4;
-  }
+  .demo-note{background:var(--accent-soft);border:1px dashed var(--accent);border-radius:10px;padding:10px 12px;font-size:12px;color:#7a5a15;margin-top:16px;text-align:left;line-height:1.4;}
 
+  /* Dashboard */
   .greet-card{
-    background:var(--primary);color:#fff;border-radius:18px;padding:18px;margin-bottom:18px;
-    background-image:radial-gradient(circle at 90% -10%, rgba(217,164,65,0.35), transparent 55%);
+    background:linear-gradient(135deg,var(--primary),#2B684F);color:#fff;border-radius:18px;
+    padding:19px;margin-bottom:18px;position:relative;overflow:hidden;
+    box-shadow:0 9px 22px rgba(31,78,61,.18);animation:rise .4s ease both;
   }
-  .greet-card .hi{font-size:13px;opacity:0.85;}
-  .greet-card .farmer-name{font-size:19px;font-weight:800;margin-top:2px;}
-
-  .section-title{font-size:14px;font-weight:800;color:var(--primary-dark);margin:4px 0 12px 2px;}
-  .form-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;}
-
+  .greet-card::after{
+    content:"";position:absolute;width:145px;height:145px;border-radius:50%;
+    right:-55px;top:-70px;background:rgba(216,166,61,.2);
+  }
+  .greet-card .hi{font-size:13px;opacity:.84;position:relative;z-index:1;}
+  .greet-card .farmer-name{font-size:20px;font-weight:800;margin-top:2px;position:relative;z-index:1;}
+  .section-title{font-size:14px;font-weight:800;color:var(--primary-dark);margin:4px 0 12px 2px;letter-spacing:-.1px;}
+  .form-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);}
   .token-card{
-    position:relative;background:#fff;border-radius:14px;margin-bottom:14px;
-    box-shadow:0 4px 14px rgba(92,64,51,0.12);overflow:hidden;
+    position:relative;background:#fff;border-radius:15px;margin-bottom:14px;
+    box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(226,221,209,.8);
+    animation:rise .35s ease both;transition:transform .2s,box-shadow .2s;
   }
-  .token-top{background:var(--primary);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
-  .token-top .tid{font-size:11px;opacity:0.8;}
+  .token-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(31,78,61,.12);}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .token-top{background:linear-gradient(135deg,var(--primary),#285F4A);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+  .token-top .tid{font-size:11px;opacity:.82;}
   .token-body{padding:14px 16px;}
-  .token-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--ink);}
+  .token-row{display:flex;justify-content:space-between;gap:16px;font-size:13px;padding:5px 0;color:var(--ink);}
+  .token-row span:last-child{text-align:right;font-weight:600;}
   .token-row span:first-child{color:var(--soil);}
+  .queue-banner{background:var(--accent-soft);color:#7a5a15;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:700;margin:8px 0;text-align:center;}
   .token-notch{position:absolute;left:-8px;top:44px;width:16px;height:16px;background:var(--bg);border-radius:50%;}
   .token-notch.right{left:auto;right:-8px;}
-  .status-chip{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;}
+  .status-chip{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:20px;}
   .status-pending{background:#FCEBD0;color:var(--amber);}
   .status-progress{background:#DCEEFB;color:#1E6FA8;}
   .status-done{background:#DEF0E4;color:var(--success);}
+  .status-cancelled{background:#F3DCDC;color:var(--danger);}
   .empty-state{text-align:center;padding:40px 20px;color:var(--soil);}
-  .empty-state .ic{font-size:40px;margin-bottom:8px;}
-  .admin-note{font-size:11.5px;color:var(--soil);background:var(--accent-soft);border-radius:10px;padding:8px 12px;margin-bottom:14px;line-height:1.4;}
+  .empty-state .ic{font-size:0;margin-bottom:12px;}
+  .empty-state .ic::before{content:"";display:inline-block;width:38px;height:38px;background:url("https://unpkg.com/lucide-static@latest/icons/inbox.svg") center/contain no-repeat;opacity:.55;}
+  .admin-note{font-size:11.5px;color:var(--soil);background:var(--accent-soft);border-radius:10px;padding:9px 12px;margin-bottom:14px;line-height:1.4;}
+  .admin-subtabs{display:flex;gap:8px;margin-bottom:12px;}
+  .admin-subtab{flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--primary);background:#fff;color:var(--primary);font-weight:700;font-size:12.5px;cursor:pointer;transition:.2s;}
+  .admin-subtab:hover{transform:translateY(-1px);}
+  .admin-subtab.active{background:var(--primary);color:#fff;}
 
-  .bottomnav{
-    position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);
-    display:flex;padding:8px 4px 10px 4px;
-  }
-  .navbtn{
-    flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;
-    color:#9a9182;font-size:10.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px;
-  }
+  .notif-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;transition:.2s;animation:rise .3s ease both;}
+  .notif-item:hover{transform:translateX(2px);box-shadow:var(--shadow);}
+  .notif-msg{font-size:13px;line-height:1.4;color:var(--ink);}
+  .notif-time{font-size:11px;color:var(--soil);margin-top:4px;}
+
+  /* Bottom navigation */
+  .bottomnav{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;padding:8px 4px 10px;z-index:4;}
+  .navbtn{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;color:#9a9182;font-size:10.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:5px;transition:.2s;}
   .navbtn.active{color:var(--primary);}
-  .navbtn .ic{font-size:19px;}
+  .navbtn:hover{transform:translateY(-1px);}
+  .navbtn .ic{font-size:0;width:21px;height:21px;position:relative;}
+  .navbtn[data-nav="book"] .ic::before{content:"";position:absolute;inset:0;background:url("https://unpkg.com/lucide-static@latest/icons/calendar-days.svg") center/contain no-repeat;}
+  .navbtn[data-nav="bookings"] .ic::before{content:"";position:absolute;inset:0;background:url("https://unpkg.com/lucide-static@latest/icons/receipt-text.svg") center/contain no-repeat;}
+  .navbtn[data-nav="history"] .ic::before{content:"";position:absolute;inset:0;background:url("https://unpkg.com/lucide-static@latest/icons/history.svg") center/contain no-repeat;}
+  .navbtn[data-nav="admin"] .ic::before{content:"";position:absolute;inset:0;background:url("https://unpkg.com/lucide-static@latest/icons/warehouse.svg") center/contain no-repeat;}
+  .navbtn.active .ic::before{filter:brightness(.72) saturate(1.2);}
 
   .chat-fab{
     position:absolute;right:16px;bottom:78px;width:54px;height:54px;border-radius:50%;
-    background:var(--accent);border:none;font-size:24px;box-shadow:0 6px 16px rgba(217,164,65,0.5);
-    cursor:pointer;z-index:5;
+    background:var(--accent);border:none;font-size:0;box-shadow:0 8px 20px rgba(150,104,20,.3);
+    cursor:pointer;z-index:5;transition:.2s;animation:float 3s ease-in-out infinite;
   }
-  .chat-panel{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10;}
-  .chat-panel.open{display:flex;}
-  .chat-header{background:var(--primary);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:10px;}
-  .chat-header .back{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;}
+  .chat-fab::before{content:"";position:absolute;inset:15px;background:url("https://unpkg.com/lucide-static@latest/icons/message-circle.svg") center/contain no-repeat;}
+  .chat-fab:hover{transform:scale(1.05);}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+  .chat-panel,.notif-panel{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10;animation:screenIn .25s ease both;}
+  .chat-panel.open,.notif-panel.open{display:flex;}
+  .chat-header{background:linear-gradient(135deg,var(--primary),#285F4A);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:10px;}
+  .chat-header .back{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
   .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
-  .msg{max-width:80%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;}
+  .msg{max-width:80%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;animation:rise .25s ease both;}
   .msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px;}
   .msg.user{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
   .chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff;}
   .chat-input-row input{flex:1;padding:11px 14px;border-radius:20px;border:1.5px solid var(--line);font-family:inherit;font-size:14px;}
-  .chat-input-row button{background:var(--primary);color:#fff;border:none;border-radius:50%;width:42px;height:42px;font-size:16px;cursor:pointer;}
+  .chat-input-row button{background:var(--primary);color:#fff;border:none;border-radius:50%;width:42px;height:42px;font-size:0;cursor:pointer;}
+  .chat-input-row button::before{content:"";display:block;width:17px;height:17px;margin:auto;background:url("https://unpkg.com/lucide-static@latest/icons/send.svg") center/contain no-repeat;filter:brightness(0) invert(1);}
+  .notif-body{flex:1;overflow-y:auto;padding:16px;}
 
   .toast{
     position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
-    padding:10px 18px;border-radius:24px;font-size:12.5px;z-index:20;opacity:0;transition:opacity .25s;
-    pointer-events:none;white-space:nowrap;max-width:90%;text-align:center;
+    padding:10px 18px;border-radius:24px;font-size:12.5px;z-index:20;opacity:0;
+    transition:opacity .25s,transform .25s;pointer-events:none;max-width:90%;text-align:center;
   }
-  .toast.show{opacity:1;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(4px);}
+
+  @media(max-width:430px){
+    body{padding:0;background:var(--bg);}
+    #app-shell{min-height:100vh;border-radius:0;border:none;box-shadow:none;}
+  }
 </style>
 </head>
 <body>
+<!-- Visual assets expected in public/: logo-icon.png, favicon.png, logo-full.png.
+     Optional local photography can replace the Unsplash hero URL in .login-hero. -->
 <div id="app-shell">
 
   <div class="topbar">
     <div class="brand">
-      <div class="brand-mark">🌾</div>
+      <div class="brand-mark"><img src="logo-icon.png" alt="Kisan Sathi"></div>
       <div class="brand-text">
         <div class="name">Kisan Sathi</div>
         <div class="tagline" id="brandTag">किसान साथी</div>
       </div>
     </div>
-    <div class="lang-toggle">
-      <button id="langHi" onclick="setLang('hi')">हिं</button>
-      <button id="langEn" class="active" onclick="setLang('en')">EN</button>
+    <div class="topbar-right">
+      <button class="bell-btn" id="bellBtn" onclick="openNotifications()">
+  🔔<span class="bell-badge" id="bellBadge" style="display:none;">0</span>
+</button>
+      <div class="lang-toggle">
+        <button id="langHi" onclick="setLang('hi')">हिं</button>
+        <button id="langEn" class="active" onclick="setLang('en')">EN</button>
+      </div>
     </div>
   </div>
 
   <div class="screen active" id="screen-login">
     <div class="login-wrap">
-      <div class="login-illustration">🧑‍🌾</div>
+      <div class="login-hero">
+        <div class="login-hero-content">
+          <img src="logo-icon.png" alt="Kisan Sathi">
+          <div class="mini">किसान साथी · Kisan Sathi</div>
+        </div>
+      </div>
       <h1 class="hero" data-i="loginTitle">Welcome to Kisan Sathi</h1>
       <p class="sub" data-i="loginSub">Book your procurement slot, track your payment, and skip the long queue at the centre.</p>
 
@@ -197,7 +285,7 @@
         <option value="soybean" data-i="cropSoy">Soybean</option>
       </select>
       <label class="field-label" data-i="centreLabel">Procurement centre</label>
-      <select class="field-input" id="centreSelect">
+      <select class="field-input" id="centreSelect" onchange="checkAvailability()">
         <option value="1">Bilaspur Mandi Centre 1</option>
         <option value="2">Bilaspur Mandi Centre 2</option>
         <option value="3">Takhatpur Procurement Centre</option>
@@ -205,15 +293,16 @@
       <label class="field-label" data-i="qtyLabel">Expected quantity (quintals)</label>
       <input class="field-input" id="qtyInput" type="number" min="1" placeholder="e.g. 25">
       <label class="field-label" data-i="dateLabel">Preferred date</label>
-      <input class="field-input" id="dateInput" type="date">
+      <input class="field-input" id="dateInput" type="date" onchange="checkAvailability()">
       <label class="field-label" data-i="slotLabel">Time slot</label>
-      <select class="field-input" id="slotSelect">
+      <select class="field-input" id="slotSelect" onchange="checkAvailability()">
         <option>7:00 AM – 9:00 AM</option>
         <option>9:00 AM – 11:00 AM</option>
         <option>11:00 AM – 1:00 PM</option>
         <option>2:00 PM – 4:00 PM</option>
       </select>
-      <button class="btn-primary" onclick="confirmBooking()" data-i="confirmBooking">Confirm Booking</button>
+      <div id="availNote" style="display:none;"></div>
+      <button class="btn-primary" id="confirmBtn" onclick="confirmBooking()" data-i="confirmBooking">Confirm Booking</button>
     </div>
   </div>
 
@@ -222,10 +311,20 @@
     <div id="bookingsList"></div>
   </div>
 
+  <div class="screen" id="screen-history">
+    <div class="section-title" data-i="historyTitle">Booking history</div>
+    <div id="historyList"></div>
+  </div>
+
   <div class="screen" id="screen-admin">
     <div class="section-title" data-i="centreTitle">Centre queue (all farmers)</div>
     <div class="admin-note" data-i="adminNote">This view simulates a procurement-centre officer checking bookings from a different device.</div>
+    <div class="admin-subtabs">
+      <button class="admin-subtab active" id="adminSubtabActive" onclick="showAdminSubtab('active')" data-i="adminTabActive">Active queue</button>
+      <button class="admin-subtab" id="adminSubtabHistory" onclick="showAdminSubtab('history')" data-i="adminTabHistory">History</button>
+    </div>
     <div id="adminList"></div>
+    <div id="adminHistoryList" style="display:none;"></div>
   </div>
 
   <div class="chat-panel" id="chatPanel">
@@ -243,12 +342,24 @@
     </div>
   </div>
 
-  <div class="chat-fab" onclick="openChat()">💬</div>
+  <div class="notif-panel" id="notifPanel">
+    <div class="chat-header">
+      <button class="back" onclick="closeNotifications()">←</button>
+      <div>
+        <div style="font-weight:800;font-size:14px;" data-i="notifTitle">Notifications</div>
+        <div style="font-size:11px;opacity:0.85;" data-i="notifSub">Booking, queue and payment updates</div>
+      </div>
+    </div>
+    <div class="notif-body" id="notifList"></div>
+  </div>
+
+  <div class="chat-fab" onclick="openChat()" aria-label="Open Kisan Sathi Assistant"></div>
 
   <div class="bottomnav" id="bottomNav" style="display:none;">
-    <button class="navbtn active" data-nav="book" onclick="goScreen('book')"><span class="ic">📅</span><span data-i="navBook">Book</span></button>
-    <button class="navbtn" data-nav="bookings" onclick="goScreen('bookings')"><span class="ic">🧾</span><span data-i="navBookings">Bookings</span></button>
-    <button class="navbtn" data-nav="admin" onclick="goScreen('admin')"><span class="ic">🏭</span><span data-i="navCentre">Centre</span></button>
+    <button class="navbtn active" data-nav="book" onclick="goScreen('book')"><span class="ic" aria-hidden="true"></span><span data-i="navBook">Book</span></button>
+    <button class="navbtn" data-nav="bookings" onclick="goScreen('bookings')"><span class="ic" aria-hidden="true"></span><span data-i="navBookings">Bookings</span></button>
+    <button class="navbtn" data-nav="history" onclick="goScreen('history')"><span class="ic" aria-hidden="true"></span><span data-i="navHistory">History</span></button>
+    <button class="navbtn" data-nav="admin" onclick="goScreen('admin')"><span class="ic" aria-hidden="true"></span><span data-i="navCentre">Centre</span></button>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -264,22 +375,27 @@ const I18N = {
     myBookings:"My bookings", centreTitle:"Centre queue (all farmers)",
     adminNote:"This view simulates a procurement-centre officer checking bookings from a different device.",
     chatTitle:"Kisan Sathi Assistant", chatSub:"Ask about booking, queue or payment", chatPlaceholder:"Type your question...",
-    navBook:"Book", navBookings:"Bookings", navCentre:"Centre",
+    notifTitle:"Notifications", notifSub:"Booking, queue and payment updates", emptyNotif:"No notifications yet.",
+    navBook:"Book", navBookings:"Bookings", navCentre:"Centre", navHistory:"History",
+    historyTitle:"Booking history", emptyHistory:"No booking history yet.", statusCancelled:"Cancelled",
+    adminTabActive:"Active queue", adminTabHistory:"History", emptyAdminHistory:"No completed bookings yet.",
     cropWheat:"Wheat", cropPaddy:"Paddy (Rice)", cropMaize:"Maize", cropSoy:"Soybean",
     emptyBookings:"No bookings yet. Book your first slot!", emptyAdmin:"No bookings in the system yet.",
     tokenNo:"Token", statusPending:"Pending", statusProgress:"In Queue", statusDone:"Procured",
     paymentPaid:"Paid", paymentPending:"Pending", cancelBooking:"Cancel Booking",
-    markQueue:"Mark In Queue", markProcured:"Mark Procured",
+    markQueue:"Mark In Queue", markProcured:"Mark Procured", markPaid:"Mark Paid",
     invalidOtp:"Incorrect OTP, please try again.", invalidPhone:"Please enter a valid 10-digit mobile number.",
     fillFields:"Please fill in quantity and date.", bookingSaved:"Booking confirmed!", bookingCancelled:"Booking cancelled.",
-    statusUpdated:"Status updated.", serverError:"Could not reach the server.", confirmCancel:"Cancel this booking?",
+    statusUpdated:"Status updated.", paymentUpdated:"Payment marked as paid.", serverError:"Could not reach the server.", confirmCancel:"Cancel this booking?",
     otpSentDemo:"Demo mode (no real SMS gateway yet) — your OTP is", chatWelcome:"Namaste! I'm the Kisan Sathi assistant. Ask me how to book a slot, check your queue position, or track payment.",
     fLabelCrop:"Crop", fLabelCentre:"Centre", fLabelQty:"Quantity", fLabelDate:"Date", fLabelSlot:"Slot", fLabelPayment:"Payment", fLabelDateSlot:"Date / Slot",
     faqDefault:"I can help with booking, queue status, payment, or login. Try asking about one of those!",
     faqBook:"To book a slot: go to the Book tab, choose your crop, centre, quantity, date and time, then tap Confirm Booking.",
-    faqQueue:"Check the My Bookings tab — it shows your current status: Pending, In Queue, or Procured.",
+    faqQueue:"Check the My Bookings tab — it shows your current status and queue position.",
     faqPayment:"Payment status shows in My Bookings under each booking — Pending or Paid.",
     faqOtp:"Enter your 10-digit mobile number, tap Send OTP, then enter the code shown to log in.",
+    slotsRemaining:"remaining", slotsFull:"This slot is full — please choose a different date or time.", slotsAvail:"available", ofWord:"of",
+    queueLine1:"You are #", queueLine2:" of ", queueLine3:" in queue at this slot",
   },
   hi: {
     loginTitle:"किसान साथी में आपका स्वागत है", loginSub:"अपनी खरीद स्लॉट बुक करें, भुगतान ट्रैक करें, और केंद्र पर लंबी कतार से बचें।",
@@ -289,33 +405,46 @@ const I18N = {
     myBookings:"मेरी बुकिंग", centreTitle:"केंद्र की कतार (सभी किसान)",
     adminNote:"यह दृश्य दिखाता है कि केंद्र अधिकारी किसी अन्य डिवाइस से बुकिंग कैसे देखेगा।",
     chatTitle:"किसान साथी सहायक", chatSub:"बुकिंग, कतार या भुगतान के बारे में पूछें", chatPlaceholder:"अपना सवाल लिखें...",
-    navBook:"बुक करें", navBookings:"बुकिंग", navCentre:"केंद्र",
+    notifTitle:"सूचनाएं", notifSub:"बुकिंग, कतार और भुगतान अपडेट", emptyNotif:"अभी कोई सूचना नहीं है।",
+    navBook:"बुक करें", navBookings:"बुकिंग", navCentre:"केंद्र", navHistory:"इतिहास",
+    historyTitle:"बुकिंग इतिहास", emptyHistory:"अभी तक कोई बुकिंग इतिहास नहीं है।", statusCancelled:"रद्द",
+    adminTabActive:"सक्रिय कतार", adminTabHistory:"इतिहास", emptyAdminHistory:"अभी तक कोई पूर्ण बुकिंग नहीं है।",
     cropWheat:"गेहूं", cropPaddy:"धान (चावल)", cropMaize:"मक्का", cropSoy:"सोयाबीन",
     emptyBookings:"अभी कोई बुकिंग नहीं है। अपना पहला स्लॉट बुक करें!", emptyAdmin:"अभी तक कोई बुकिंग नहीं है।",
     tokenNo:"टोकन", statusPending:"लंबित", statusProgress:"कतार में", statusDone:"खरीद हुई",
     paymentPaid:"भुगतान हुआ", paymentPending:"लंबित", cancelBooking:"बुकिंग रद्द करें",
-    markQueue:"कतार में डालें", markProcured:"खरीद पूर्ण करें",
+    markQueue:"कतार में डालें", markProcured:"खरीद पूर्ण करें", markPaid:"भुगतान करें",
     invalidOtp:"गलत OTP, पुनः प्रयास करें।", invalidPhone:"कृपया मान्य 10-अंकीय मोबाइल नंबर दर्ज करें।",
     fillFields:"कृपया मात्रा और तारीख भरें।", bookingSaved:"बुकिंग पक्की हो गई!", bookingCancelled:"बुकिंग रद्द कर दी गई।",
-    statusUpdated:"स्थिति अपडेट हुई।", serverError:"सर्वर से जुड़ नहीं पाया।", confirmCancel:"क्या आप बुकिंग रद्द करना चाहते हैं?",
+    statusUpdated:"स्थिति अपडेट हुई।", paymentUpdated:"भुगतान पूर्ण के रूप में चिह्नित किया गया।", serverError:"सर्वर से जुड़ नहीं पाया।", confirmCancel:"क्या आप बुकिंग रद्द करना चाहते हैं?",
     otpSentDemo:"डेमो मोड (कोई SMS गेटवे कनेक्ट नहीं है) — आपका OTP है", chatWelcome:"नमस्ते! मैं किसान साथी सहायक हूं। मुझसे स्लॉट बुकिंग, कतार स्थिति या भुगतान के बारे में पूछें।",
     fLabelCrop:"फसल", fLabelCentre:"केंद्र", fLabelQty:"मात्रा", fLabelDate:"तारीख", fLabelSlot:"स्लॉट", fLabelPayment:"भुगतान", fLabelDateSlot:"तारीख / स्लॉट",
     faqDefault:"मैं बुकिंग, कतार स्थिति, भुगतान या लॉगिन में मदद कर सकता हूं। इनमें से कुछ पूछें!",
     faqBook:"स्लॉट बुक करने के लिए: Book टैब में जाएं, फसल, केंद्र, मात्रा, तारीख और समय चुनें, फिर Confirm Booking दबाएं।",
-    faqQueue:"My Bookings टैब देखें — यह आपकी स्थिति दिखाता है: लंबित, कतार में, या खरीद हुई।",
+    faqQueue:"My Bookings टैब देखें — यह आपकी स्थिति और कतार स्थान दिखाता है।",
     faqPayment:"भुगतान की स्थिति My Bookings में हर बुकिंग के नीचे दिखती है — लंबित या भुगतान हुआ।",
     faqOtp:"अपना 10-अंकीय मोबाइल नंबर दर्ज करें, OTP भेजें दबाएं, फिर दिखाया गया कोड डालें।",
+    slotsRemaining:"बाकी", slotsFull:"यह स्लॉट भर गया है — कृपया दूसरी तारीख या समय चुनें।", slotsAvail:"उपलब्ध", ofWord:"में से",
+    queueLine1:"आप #", queueLine2:" में से ", queueLine3:" पर हैं इस स्लॉट में",
   }
 };
 let lang = 'en';
 let currentFarmer = null;
+let clientNotifications = [];
+let lastSeenNotifCount = 0;
+
+function pushNotification(message){
+  clientNotifications.unshift({ message: message, createdAt: new Date().toISOString() });
+  refreshNotificationBadge();
+  showToast(message);
+}
 
 function t(key){ return (I18N[lang] && I18N[lang][key]) || key; }
 
 function applyLang(){
   document.querySelectorAll('[data-i]').forEach(function(el){ el.textContent = t(el.getAttribute('data-i')); });
   document.querySelectorAll('[data-i-ph]').forEach(function(el){ el.placeholder = t(el.getAttribute('data-i-ph')); });
-  document.getElementById('brandTag').textContent = lang === 'hi' ? 'Kisan Sathi' : 'किसान साथी';
+  document.getElementById('brandTag').textContent = lang === 'hi' ? 'किसान साथी' : 'Kisan Sathi';
   const bookingsScreen = document.getElementById('screen-bookings');
   const adminScreen = document.getElementById('screen-admin');
   if(bookingsScreen && bookingsScreen.classList.contains('active') && currentFarmer) loadBookings();
@@ -361,13 +490,16 @@ function verifyOtp(){
     document.getElementById('farmerNameDisplay').textContent = currentFarmer.name || currentFarmer.phone;
     document.getElementById('screen-login').classList.remove('active');
     document.getElementById('bottomNav').style.display = 'flex';
+    document.getElementById('bellBtn').style.display = 'inline-block';
     goScreen('book');
+    checkAvailability();
+    refreshNotificationBadge();
     addChatMessage(t('chatWelcome'), 'bot');
   }).catch(function(){ showToast(t('serverError')); });
 }
 
 function goScreen(name){
-  const screens = ['login','book','bookings','admin'];
+  const screens = ['login','book','bookings','history','admin'];
   for(let i=0;i<screens.length;i++){
     const el = document.getElementById('screen-'+screens[i]);
     if(el) el.classList.remove('active');
@@ -375,18 +507,48 @@ function goScreen(name){
   document.getElementById('screen-'+name).classList.add('active');
   document.querySelectorAll('.navbtn').forEach(function(b){ b.classList.toggle('active', b.dataset.nav === name); });
   if(name === 'bookings') loadBookings();
+  if(name === 'history') loadHistory();
   if(name === 'admin') loadAdmin();
 }
 
 function statusChip(status){
   if(status === 'done') return '<span class="status-chip status-done">' + t('statusDone') + '</span>';
   if(status === 'progress') return '<span class="status-chip status-progress">' + t('statusProgress') + '</span>';
+  if(status === 'cancelled') return '<span class="status-chip status-cancelled">' + t('statusCancelled') + '</span>';
   return '<span class="status-chip status-pending">' + t('statusPending') + '</span>';
 }
 
 function cropLabel(crop){
   const map = { wheat:'cropWheat', paddy:'cropPaddy', maize:'cropMaize', soybean:'cropSoy' };
   return t(map[crop] || crop);
+}
+
+function checkAvailability(){
+  const centreId = document.getElementById('centreSelect').value;
+  const date = document.getElementById('dateInput').value;
+  const slot = document.getElementById('slotSelect').value;
+  const noteEl = document.getElementById('availNote');
+  const btn = document.getElementById('confirmBtn');
+  if(!date){ noteEl.style.display = 'none'; btn.disabled = false; return; }
+  fetch('/api/availability?centreId=' + centreId + '&date=' + date + '&slot=' + encodeURIComponent(slot))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.error) return;
+      noteEl.style.display = 'block';
+      if(data.remaining <= 0){
+        noteEl.className = 'avail-note avail-full';
+        noteEl.textContent = t('slotsFull');
+        btn.disabled = true;
+      } else if(data.remaining <= Math.max(3, Math.round(data.capacity * 0.15))){
+        noteEl.className = 'avail-note avail-low';
+        noteEl.textContent = data.remaining + ' ' + t('slotsRemaining') + ' (' + data.booked + ' ' + t('ofWord') + ' ' + data.capacity + ')';
+        btn.disabled = false;
+      } else {
+        noteEl.className = 'avail-note avail-ok';
+        noteEl.textContent = data.remaining + ' ' + t('slotsRemaining') + ' (' + data.booked + ' ' + t('ofWord') + ' ' + data.capacity + ')';
+        btn.disabled = false;
+      }
+    }).catch(function(){});
 }
 
 function confirmBooking(){
@@ -405,10 +567,11 @@ function confirmBooking(){
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(body)
   }).then(function(r){ return r.json(); }).then(function(data){
-    if(data.error){ showToast('Booking failed: ' + data.error); return; }
-    showToast(t('bookingSaved'));
+    if(data.error){ showToast(data.error); return; }
     document.getElementById('qtyInput').value = '';
     document.getElementById('dateInput').value = '';
+    document.getElementById('availNote').style.display = 'none';
+    pushNotification('Booking confirmed. Token #' + String(data.id).padStart(6,'0') + '.');
     goScreen('bookings');
   }).catch(function(){ showToast(t('serverError')); });
 }
@@ -418,24 +581,61 @@ function loadBookings(){
     .then(function(r){ return r.json(); })
     .then(function(list){
       const wrap = document.getElementById('bookingsList');
-      if(!list.length){
+      const active = list.filter(function(b){ return b.status !== 'done' && b.status !== 'cancelled'; });
+      if(!active.length){
         wrap.innerHTML = '<div class="empty-state"><div class="ic">🧾</div>' + t('emptyBookings') + '</div>';
+        return;
+      }
+      let html = '';
+      for(let i=0;i<active.length;i++){
+        const b = active[i];
+        let queueHtml = '';
+        if(b.queuePosition){
+          queueHtml = '<div class="queue-banner">' + t('queueLine1') + b.queuePosition + t('queueLine2') + b.queueTotal + t('queueLine3') + '</div>';
+        }
+        const isPaid = b.payment && b.payment.status === 'paid';
+        html += '<div class="token-card">' +
+          '<div class="token-notch"></div><div class="token-notch right"></div>' +
+          '<div class="token-top"><span class="tid">' + t('tokenNo') + ' #' + String(b.id).padStart(6,'0') + '</span>' + statusChip(b.status) + '</div>' +
+          '<div class="token-body">' +
+            queueHtml +
+            '<div class="token-row"><span>' + t('fLabelCrop') + '</span><span>' + cropLabel(b.crop) + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelCentre') + '</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelQty') + '</span><span>' + b.quantity + ' qtl</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelDate') + '</span><span>' + b.date.slice(0,10) + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelSlot') + '</span><span>' + b.slot + '</span></div>' +
+            '<div class="token-row"><span>' + t('fLabelPayment') + '</span><span>' + (isPaid ? t('paymentPaid') : t('paymentPending')) + '</span></div>' +
+            (isPaid ? '' : '<button class="btn-primary btn-danger btn-small" onclick="cancelBooking(' + b.id + ')">' + t('cancelBooking') + '</button>') +
+          '</div>' +
+        '</div>';
+      }
+      wrap.innerHTML = html;
+      refreshNotificationBadge();
+    }).catch(function(){ showToast(t('serverError')); });
+}
+
+function loadHistory(){
+  fetch('/api/farmers/' + currentFarmer.id + '/bookings')
+    .then(function(r){ return r.json(); })
+    .then(function(list){
+      const wrap = document.getElementById('historyList');
+      if(!list.length){
+        wrap.innerHTML = '<div class="empty-state"><div class="ic">📜</div>' + t('emptyHistory') + '</div>';
         return;
       }
       let html = '';
       for(let i=0;i<list.length;i++){
         const b = list[i];
+        const isPaid = b.payment && b.payment.status === 'paid';
         html += '<div class="token-card">' +
           '<div class="token-notch"></div><div class="token-notch right"></div>' +
           '<div class="token-top"><span class="tid">' + t('tokenNo') + ' #' + String(b.id).padStart(6,'0') + '</span>' + statusChip(b.status) + '</div>' +
           '<div class="token-body">' +
             '<div class="token-row"><span>' + t('fLabelCrop') + '</span><span>' + cropLabel(b.crop) + '</span></div>' +
             '<div class="token-row"><span>' + t('fLabelCentre') + '</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
-            '<div class="token-row"><span>' + t('fLabelQty') + '</span><span>' + b.quantity + ' qtl</span></div>' +
             '<div class="token-row"><span>' + t('fLabelDate') + '</span><span>' + b.date.slice(0,10) + '</span></div>' +
             '<div class="token-row"><span>' + t('fLabelSlot') + '</span><span>' + b.slot + '</span></div>' +
-            '<div class="token-row"><span>' + t('fLabelPayment') + '</span><span>' + ((b.payment && b.payment.status === 'paid') ? t('paymentPaid') : t('paymentPending')) + '</span></div>' +
-            '<button class="btn-primary btn-danger btn-small" onclick="cancelBooking(' + b.id + ')">' + t('cancelBooking') + '</button>' +
+            '<div class="token-row"><span>' + t('fLabelPayment') + '</span><span>' + (isPaid ? t('paymentPaid') : t('paymentPending')) + '</span></div>' +
           '</div>' +
         '</div>';
       }
@@ -445,11 +645,13 @@ function loadBookings(){
 
 function cancelBooking(id){
   if(!confirm(t('confirmCancel'))) return;
-  fetch('/api/bookings/' + id, { method:'DELETE' })
-    .then(function(r){ return r.json(); })
+  fetch('/api/bookings/' + id + '/status', {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ status: 'cancelled' })
+  }).then(function(r){ return r.json(); })
     .then(function(data){
       if(data.error){ showToast('Could not cancel: ' + data.error); return; }
-      showToast(t('bookingCancelled'));
+      pushNotification('Booking token #' + String(id).padStart(6,'0') + ' has been cancelled.');
       loadBookings();
     }).catch(function(){ showToast(t('serverError')); });
 }
@@ -465,32 +667,62 @@ function nextStatusLabel(current){
   return null;
 }
 
+function adminCardHtml(b, showActions){
+  const label = showActions ? nextStatusLabel(b.status) : null;
+  const isPaid = b.payment && b.payment.status === 'paid';
+  return '<div class="token-card">' +
+    '<div class="token-notch"></div><div class="token-notch right"></div>' +
+    '<div class="token-top"><span class="tid">' + (b.farmer ? b.farmer.phone : '') + '</span>' + statusChip(b.status) + '</div>' +
+    '<div class="token-body">' +
+      '<div class="token-row"><span>' + t('fLabelCrop') + '</span><span>' + cropLabel(b.crop) + '</span></div>' +
+      '<div class="token-row"><span>' + t('fLabelCentre') + '</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
+      '<div class="token-row"><span>' + t('fLabelDateSlot') + '</span><span>' + b.date.slice(0,10) + ' · ' + b.slot + '</span></div>' +
+      '<div class="token-row"><span>' + t('fLabelPayment') + '</span><span>' + (isPaid ? t('paymentPaid') : t('paymentPending')) + '</span></div>' +
+      (label ? '<button class="btn-primary btn-small" onclick="advanceStatus(' + b.id + ", '" + nextStatus(b.status) + "')\">" + label + '</button>' : '') +
+      (showActions && !isPaid ? '<button class="btn-primary btn-outline btn-small" onclick="markPaid(' + b.id + ')">' + t('markPaid') + '</button>' : '') +
+    '</div>' +
+  '</div>';
+}
+
 function loadAdmin(){
   fetch('/api/admin/bookings')
     .then(function(r){ return r.json(); })
     .then(function(list){
-      const wrap = document.getElementById('adminList');
-      if(!list.length){
-        wrap.innerHTML = '<div class="empty-state"><div class="ic">🏭</div>' + t('emptyAdmin') + '</div>';
-        return;
+      const activeWrap = document.getElementById('adminList');
+      const historyWrap = document.getElementById('adminHistoryList');
+      const active = list.filter(function(b){ return b.status !== 'done' && b.status !== 'cancelled'; });
+      const history = list.filter(function(b){ return b.status === 'done' || b.status === 'cancelled'; });
+
+      if(!active.length){
+        activeWrap.innerHTML = '<div class="empty-state"><div class="ic">🏭</div>' + t('emptyAdmin') + '</div>';
+      } else {
+        let html = '';
+        for(let i=0;i<active.length;i++){ html += adminCardHtml(active[i], true); }
+        activeWrap.innerHTML = html;
       }
-      let html = '';
-      for(let i=0;i<list.length;i++){
-        const b = list[i];
-        const label = nextStatusLabel(b.status);
-        html += '<div class="token-card">' +
-          '<div class="token-notch"></div><div class="token-notch right"></div>' +
-          '<div class="token-top"><span class="tid">' + (b.farmer ? b.farmer.phone : '') + '</span>' + statusChip(b.status) + '</div>' +
-          '<div class="token-body">' +
-            '<div class="token-row"><span>' + t('fLabelCrop') + '</span><span>' + cropLabel(b.crop) + '</span></div>' +
-            '<div class="token-row"><span>' + t('fLabelCentre') + '</span><span>' + (b.centre ? b.centre.name : '') + '</span></div>' +
-            '<div class="token-row"><span>' + t('fLabelDateSlot') + '</span><span>' + b.date.slice(0,10) + ' · ' + b.slot + '</span></div>' +
-            (label ? '<button class="btn-primary btn-small" onclick="advanceStatus(' + b.id + ", '" + nextStatus(b.status) + "')\">" + label + '</button>' : '') +
-          '</div>' +
-        '</div>';
+
+      if(!history.length){
+        historyWrap.innerHTML = '<div class="empty-state"><div class="ic">📜</div>' + t('emptyAdminHistory') + '</div>';
+      } else {
+        let html2 = '';
+        for(let i=0;i<history.length;i++){ html2 += adminCardHtml(history[i], false); }
+        historyWrap.innerHTML = html2;
       }
-      wrap.innerHTML = html;
     }).catch(function(){ showToast(t('serverError')); });
+}
+
+function showAdminSubtab(which){
+  const activeBtn = document.getElementById('adminSubtabActive');
+  const historyBtn = document.getElementById('adminSubtabHistory');
+  const activeWrap = document.getElementById('adminList');
+  const historyWrap = document.getElementById('adminHistoryList');
+  if(which === 'history'){
+    activeBtn.classList.remove('active'); historyBtn.classList.add('active');
+    activeWrap.style.display = 'none'; historyWrap.style.display = 'block';
+  } else {
+    historyBtn.classList.remove('active'); activeBtn.classList.add('active');
+    historyWrap.style.display = 'none'; activeWrap.style.display = 'block';
+  }
 }
 
 function advanceStatus(id, newStatus){
@@ -500,7 +732,23 @@ function advanceStatus(id, newStatus){
   }).then(function(r){ return r.json(); })
     .then(function(data){
       if(data.error){ showToast('Could not update: ' + data.error); return; }
-      showToast(t('statusUpdated'));
+      const tokenNo = String(id).padStart(6,'0');
+      if(newStatus === 'progress'){
+        pushNotification('Token #' + tokenNo + ' is now In Queue at the centre.');
+      } else if(newStatus === 'done'){
+        pushNotification('Token #' + tokenNo + ' has been Procured. Thank you!');
+      }
+      loadAdmin();
+    }).catch(function(){ showToast(t('serverError')); });
+}
+
+function markPaid(id){
+  fetch('/api/bookings/' + id + '/payment', {
+    method:'PATCH', headers:{'Content-Type':'application/json'}
+  }).then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.error){ showToast('Could not update payment: ' + data.error); return; }
+      pushNotification('Payment for token #' + String(id).padStart(6,'0') + ' has been marked as Paid.');
       loadAdmin();
     }).catch(function(){ showToast(t('serverError')); });
 }
@@ -529,6 +777,40 @@ function sendChat(){
   else if(lower.indexOf('payment') !== -1 || lower.indexOf('pay') !== -1 || lower.indexOf('money') !== -1) reply = t('faqPayment');
   else if(lower.indexOf('otp') !== -1 || lower.indexOf('login') !== -1) reply = t('faqOtp');
   setTimeout(function(){ addChatMessage(reply, 'bot'); }, 300);
+}
+
+function openNotifications(){
+  document.getElementById('notifPanel').classList.add('open');
+  loadNotifications();
+}
+function closeNotifications(){ document.getElementById('notifPanel').classList.remove('open'); }
+
+function loadNotifications(){
+  const wrap = document.getElementById('notifList');
+  if(!clientNotifications.length){
+    wrap.innerHTML = '<div class="empty-state"><div class="ic">🔔</div>' + t('emptyNotif') + '</div>';
+  } else {
+    let html = '';
+    for(let i=0;i<clientNotifications.length;i++){
+      const n = clientNotifications[i];
+      const time = new Date(n.createdAt).toLocaleString();
+      html += '<div class="notif-item"><div class="notif-msg">' + n.message + '</div><div class="notif-time">' + time + '</div></div>';
+    }
+    wrap.innerHTML = html;
+  }
+  lastSeenNotifCount = clientNotifications.length;
+  document.getElementById('bellBadge').style.display = 'none';
+}
+
+function refreshNotificationBadge(){
+  const badge = document.getElementById('bellBadge');
+  const unread = clientNotifications.length - lastSeenNotifCount;
+  if(unread > 0){
+    badge.style.display = 'inline-block';
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 applyLang();

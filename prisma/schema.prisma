@@ -13,6 +13,7 @@ model Farmer {
   village   String?
   createdAt DateTime  @default(now())
   bookings  Booking[]
+  notifications Notification[]
 }
 
 model Centre {
@@ -53,4 +54,12 @@ model OtpRequest {
   otp       String
   expiresAt DateTime
   verified  Boolean  @default(false)
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  farmerId  Int
+  farmer    Farmer   @relation(fields: [farmerId], references: [id])
+  message   String
+  createdAt DateTime @default(now())
 }
